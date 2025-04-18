@@ -1,5 +1,5 @@
 import { MongoClient } from 'mongodb';
-import {calculateRevenueByType, refreshAnalyticsData,calculateCustomerAndOrderStats,calculateProfitMarginByProduct } from '../Usecase/utils.js';
+const usecase = await import('../Usecase/utils.js');
 import dotenv from 'dotenv';
 import multer from 'multer';
 import fs from 'fs';
@@ -84,7 +84,7 @@ export const getRevenue = async (req, res) => {
       return res.status(400).json({ error: 'Invalid to date format' });
     }
 
-    const result = await calculateRevenueByType(fromDate, toDate, revenueType || 'total');
+    const result = await usecase.calculateRevenueByType(fromDate, toDate, revenueType || 'total');
 
     return res.status(200).json({
       status: 200,
@@ -104,7 +104,7 @@ export const refreshData = async (req, res) => {
       const csvFileName = req.body.filename;
       const csvPath = path.join(__dirname, '../uploads', csvFileName);
   
-      await refreshAnalyticsData(csvPath);
+      await usecase.refreshAnalyticsData(csvPath);
   
       return res.status(200).json({
         status: 200,
@@ -132,7 +132,7 @@ export const refreshData = async (req, res) => {
         return res.status(400).json({ error: 'Invalid end_date format' });
       }
   
-      const result = await calculateCustomerAndOrderStats(startDate, endDate);
+      const result = await usecase.calculateCustomerAndOrderStats(startDate, endDate);
   
       return res.status(200).json({
         status: 200,
@@ -162,7 +162,7 @@ export const refreshData = async (req, res) => {
         return res.status(400).json({ error: 'Invalid end_date format' });
       }
   
-      const result = await calculateProfitMarginByProduct(startDate, endDate);
+      const result = await usecase.calculateProfitMarginByProduct(startDate, endDate);
   
       return res.status(200).json({
         status: 200,
