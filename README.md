@@ -1,62 +1,80 @@
-📊 **Analytics API**
-An Express-based REST API for uploading sales CSV data, refreshing analytics, and retrieving insights like revenue, customer statistics, and profit margins.
+# 📊 Analytics API
 
-**🚀 Getting Started**
-**1. Clone the repository:**
-git clone <your-repo-url>
-cd <your-project-folder>
-**2. Install dependencies:**
-   `npm install`
-**3. Configure Environment Variables:**
+An Express-based REST API for uploading sales CSV data, refreshing analytics, and retrieving insights such as revenue, customer statistics, and profit margins.
+
+## 🚀 Getting Started
+
+### 1. Clone the Repository
+Clone the repository to your local machine:
+```git clone <your-repo-url>```
+```cd <your-project-folder>```
+
+
+### 2. Install Dependencies
+Install the required dependencies:
+```npm install```
+
+### 3. Configure Environment Variables
 Create a .env file in the root folder and add your MongoDB URI:
-`MONGO_URI=mongodb+srv://<your-mongodb-uri>`
-**4. Start the server:**
-   `npm start`
-**📂 API Endpoints**
-All endpoints are prefixed with /api/analytics
+```MONGO_URI=mongodb+srv://<your-mongodb-uri>```
 
-**🔄 POST /upload**
+### 4. Start the Server
+Run the server locally:
+```npm start```
+
+### 📂 API Endpoints
+All endpoints are prefixed with /api/analytics.
+
+### 🔄 POST /upload
 Description: Upload a CSV file containing sales data.
 
-**Headers:**
+### Headers:
+
 Content-Type: multipart/form-data
-**Body:**
-`file: <Your CSV file>`
-**Response:**
-`{
+
+### Body:
+{
+  "file": "<Your CSV file>"
+}
+### Response:
+{
   "message": "CSV uploaded successfully"
-}`
-**🔁 POST /refresh**
+}
+### 🔁 POST /refresh
 Description: Deletes all existing records and reloads the data from a CSV file stored in the server.
 
-**Body or Query**:
+### Body or Query:
+
 {
   "csvPath": "path/to/your/file.csv"
 }
-**Response:**
+### Response:
+
 {
   "message": "Analytics data refreshed successfully"
 }
-💰 **GET /revenue**
+### 💰 GET /revenue
 Description: Returns total revenue generated from sales.
 
-**Response:**
+Response:
 {
   "totalRevenue": 123456.78
 }
-👤 **GET /customer-order-stats**
+### 👤 GET /customer-order-stats
 Description: Returns analytics about customers and orders like total customers, total orders, and average order value.
 
-**Response:**
+### Response:
+
 {
   "totalCustomers": 500,
   "totalOrders": 1200,
   "averageOrderValue": 104.50
 }
-**📦 GET /profit-margin**
+### 📦 GET /profit-margin
 Description: Returns the profit margin for each product.
 
-**Response:**
+### Response:
+
 [
   {
     "productName": "Product A",
@@ -71,9 +89,8 @@ Description: Returns the profit margin for each product.
     "profitMargin": 44
   }
 ]
+### 🛠 Folder Structure
 
-**🛠 Folder Structure**
-.
 ├── controller/
 │   └── analysisController.js
 ├── routes/
@@ -82,6 +99,5 @@ Description: Returns the profit margin for each product.
 │   └── loader.js
 ├── app.js
 └── README.md
-
 
 
