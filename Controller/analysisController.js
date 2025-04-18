@@ -5,6 +5,7 @@ import multer from 'multer';
 import fs from 'fs';
 import path from 'path';
 import csv from 'csv-parser';
+import { loadCSVToMongo } from '../AnalyticsLoader/loader.js';
 
 dotenv.config();
 
@@ -175,3 +176,7 @@ export const refreshData = async (req, res) => {
       return res.status(500).json({ error: 'Failed to calculate profit margin' });
     }
   };
+
+
+  
+  

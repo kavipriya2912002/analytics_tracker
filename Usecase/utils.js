@@ -3,6 +3,8 @@ import path from 'path';
 import csv from 'csv-parser';
 import { MongoClient } from 'mongodb';
 import dotenv from 'dotenv';
+import { loadCSVToMongo } from '../AnalyticsLoader/loader';
+dotenv.config();
 
 dotenv.config();
 
@@ -194,104 +196,22 @@ export const calculateProfitMarginByProduct = async (startDate, endDate) => {
 
 // 4. Refresh Analytics Data from CSV
 export const refreshAnalyticsData = async (csvPath) => {
-  try {
+ try{
     if (!isConnected) {
-      await client.connect();
-      isConnected = true;
-    }
+        await client.connect();
+        isConnected = true;
+      }
+      
 
     const db = client.db('analytics');
     const collection = db.collection('analyticsLogs');
 
     const deleteResult = await collection.deleteMany({});
     console.log(`${deleteResult.deletedCount} documents deleted`);
-
-    const results = [];
-
-    fs.createReadStream(csvPath)
-      .pipe(csv())
-      .on('data', (row) => {
-        results.push(row);
-      })
-      .on('end', async () => {
-        try {
-          if (results.length > 0) {
-            const insertResult = await collection.insertMany(results);
-            console.log(`${insertResult.insertedCount} documents inserted`);
-          } else {
-            console.log('No data found in CSV to insert');
-          }
-        } catch (err) {
-          console.error('Error inserting data into MongoDB:', err);
-          throw err;
-        }
-      })
-      .on('error', (err) => {
-        console.error('Error reading CSV file:', err);
-        throw err;
-      });
-
-  } catch (err) {
-    console.error('Error refreshing analytics data:', err);
-    throw err;
+    await loadCSVToMongo(collection, csvPath);
+        console.log('CSV data loaded successfully into MongoDB');
+ } catch (error) {
+    console.error('Error refreshing analytics data:', error);
   }
+   
 };
-
-// 5. Load CSV to Mongo (with calculated fields)
-export async function loadCSVToMongo(collection, csvPath) {
-  return new Promise((resolve, reject) => {
-    const docs = [];
-
-    fs.createReadStream(csvPath)
-      .pipe(csv())
-      .on('data', (row) => {
-        try {
-          const date = new Date(row['Date of Sale']);
-          const quantity = parseInt(row['Quantity Sold'], 10) || 0;
-          const unitPrice = parseFloat(row['Unit Price']) || 0;
-          const discount = parseFloat(row['Discount']) || 0;
-          const shippingCost = parseFloat(row['Shipping Cost']) || 0;
-
-          const revenue = quantity * unitPrice * (1 - discount);
-          const cost = quantity * unitPrice * 0.5;
-
-          const doc = {
-            order_id: row['Order ID'],
-            product_id: row['Product ID'],
-            customer_id: row['Customer ID'],
-            product_name: row['Product Name'],
-            category: row['Category'],
-            region: row['Region'],
-            date,
-            quantity_sold: quantity,
-            unit_price: unitPrice,
-            discount,
-            shipping_cost: shippingCost,
-            payment_method: row['Payment Method'],
-            customer_name: row['Customer Name'],
-            customer_email: row['Customer Email'],
-            customer_address: row['Customer Address'],
-            revenue,
-            cost
-          };
-
-          docs.push(doc);
-        } catch (error) {
-          console.error('Error processing row:', row, error);
-        }
-      })
-      .on('end', async () => {
-        try {
-          if (docs.length > 0) {
-            await collection.insertMany(docs);
-          }
-          resolve();
-        } catch (err) {
-          reject(err);
-        }
-      })
-      .on('error', (err) => {
-        reject(err);
-      });
-  });
-}
