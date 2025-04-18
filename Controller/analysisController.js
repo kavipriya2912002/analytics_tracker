@@ -1,5 +1,5 @@
 import { MongoClient } from 'mongodb';
-const usecase = await import('../Usecase/utils.js');
+const usecase = await import('../Usecase/analyticsUsecase.js');
 import dotenv from 'dotenv';
 import multer from 'multer';
 import fs from 'fs';
@@ -9,7 +9,6 @@ import { loadCSVToMongo } from '../AnalyticsLoader/loader.js';
 
 dotenv.config();
 
-console.log('MONGO URI:', process.env.MONGO);
 
 const uri = process.env.MONGO;
 const client = new MongoClient(uri);

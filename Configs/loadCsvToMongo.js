@@ -1,7 +1,7 @@
 import { MongoClient } from 'mongodb';
 import dotenv from 'dotenv';
 import path from 'path';
-import { loadCSVToMongo } from '../Usecase/utils.js';
+import { loadCSVToMongo } from '../Usecase/analyticsUsecase.js';
 dotenv.config();
 
 async function run() {

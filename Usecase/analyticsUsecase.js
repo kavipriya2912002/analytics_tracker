@@ -3,7 +3,7 @@ import path from 'path';
 import csv from 'csv-parser';
 import { MongoClient } from 'mongodb';
 import dotenv from 'dotenv';
-import { loadCSVToMongo } from '../AnalyticsLoader/loader';
+import { loadCSVToMongo } from '../AnalyticsLoader/loader.js';
 dotenv.config();
 
 dotenv.config();
@@ -12,7 +12,6 @@ const uri = process.env.MONGO;
 export const client = new MongoClient(uri);
 export let isConnected = false;
 
-// 1. Calculate Revenue by Type
 export const calculateRevenueByType = async (fromDate, toDate, revenueType = 'total') => {
   try {
     if (!isConnected) {
@@ -128,7 +127,6 @@ export const calculateCustomerAndOrderStats = async (startDate, endDate) => {
   }
 };
 
-// 3. Profit Margin by Product
 export const calculateProfitMarginByProduct = async (startDate, endDate) => {
   try {
     if (!isConnected) {
@@ -194,7 +192,6 @@ export const calculateProfitMarginByProduct = async (startDate, endDate) => {
   }
 };
 
-// 4. Refresh Analytics Data from CSV
 export const refreshAnalyticsData = async (csvPath) => {
  try{
     if (!isConnected) {

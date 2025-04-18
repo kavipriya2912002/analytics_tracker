@@ -1,5 +1,4 @@
-
-
+import fs from "fs";
 export async function loadCSVToMongo(collection, csvPath) {
     return new Promise((resolve, reject) => {
       const docs = [];
