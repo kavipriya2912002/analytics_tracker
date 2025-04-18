@@ -1,5 +1,5 @@
 import { MongoClient } from 'mongodb';
-import { calculateRevenueByType } from '../Usecase/utils.js';
+import {calculateRevenueByType, refreshAnalyticsData,calculateCustomerAndOrderStats,calculateProfitMarginByProduct } from '../Usecase/utils.js';
 import dotenv from 'dotenv';
 import multer from 'multer';
 import fs from 'fs';
@@ -97,3 +97,81 @@ export const getRevenue = async (req, res) => {
     return res.status(500).json({ error: 'Failed to calculate revenue' });
   }
 };
+
+
+export const refreshData = async (req, res) => {
+    try {
+      const csvFileName = req.body.filename;
+      const csvPath = path.join(__dirname, '../uploads', csvFileName);
+  
+      await refreshAnalyticsData(csvPath);
+  
+      return res.status(200).json({
+        status: 200,
+        message: 'Data refreshed successfully',
+      });
+    } catch (error) {
+      console.error('Error refreshing data:', error);
+      return res.status(500).json({ error: 'Data refresh failed' });
+    }
+  };
+
+
+  export const getCustomerAndOrderStats = async (req, res) => {
+    try {
+      const { start_date: startDateStr, end_date: endDateStr } = req.query;
+  
+      const startDate = new Date(startDateStr);
+      const endDate = new Date(endDateStr);
+  
+      if (isNaN(startDate.getTime())) {
+        return res.status(400).json({ error: 'Invalid start_date format' });
+      }
+  
+      if (isNaN(endDate.getTime())) {
+        return res.status(400).json({ error: 'Invalid end_date format' });
+      }
+  
+      const result = await calculateCustomerAndOrderStats(startDate, endDate);
+  
+      return res.status(200).json({
+        status: 200,
+        message: 'Customer and Order Stats fetched successfully',
+        data: result
+      });
+  
+    } catch (error) {
+      console.error('Error fetching customer and order stats:', error);
+      return res.status(500).json({ error: 'Failed to calculate customer/order stats' });
+    }
+  };
+
+
+  export const getProfitMarginByProduct = async (req, res) => {
+    try {
+      const { start_date: startDateStr, end_date: endDateStr } = req.query;
+  
+      const startDate = new Date(startDateStr);
+      const endDate = new Date(endDateStr);
+  
+      if (isNaN(startDate.getTime())) {
+        return res.status(400).json({ error: 'Invalid start_date format' });
+      }
+  
+      if (isNaN(endDate.getTime())) {
+        return res.status(400).json({ error: 'Invalid end_date format' });
+      }
+  
+      const result = await calculateProfitMarginByProduct(startDate, endDate);
+  
+      return res.status(200).json({
+        status: 200,
+        message: 'Profit margin by product fetched successfully',
+        data: result
+      });
+  
+    } catch (error) {
+      console.error('Error calculating profit margin:', error);
+      return res.status(500).json({ error: 'Failed to calculate profit margin' });
+    }
+  };
